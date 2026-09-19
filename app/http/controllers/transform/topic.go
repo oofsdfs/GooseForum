@@ -7,6 +7,7 @@ import (
 	"github.com/leancodebox/GooseForum/app/models/forum/category"
 	"github.com/leancodebox/GooseForum/app/models/forum/topics"
 	"github.com/leancodebox/GooseForum/app/models/forum/users"
+	"github.com/leancodebox/GooseForum/app/service/badgeservice"
 	"github.com/leancodebox/GooseForum/app/service/urlconfig"
 )
 
@@ -34,6 +35,13 @@ func Topics2Vo(data []*topics.Entity, categoryMap map[uint64]*category.Entity) [
 }
 
 func TopicsWithUser2Vo(data []*topics.Entity, categoryMap map[uint64]*category.Entity, userMap map[uint64]*users.EntityComplete) []*vo.TopicsSimpleVo {
+	selectedBadges := make(map[uint64]string, len(userMap))
+	for userID, user := range userMap {
+		if user != nil && user.WornBadgeCode != "" {
+			selectedBadges[userID] = user.WornBadgeCode
+		}
+	}
+	wornBadges := badgeservice.GetWornBadges(selectedBadges)
 	res := make([]*vo.TopicsSimpleVo, 0, len(data))
 	for _, t := range data {
 		if t == nil {
@@ -69,6 +77,7 @@ func TopicsWithUser2Vo(data []*topics.Entity, categoryMap map[uint64]*category.E
 				Id:        poster.UserID,
 				Username:  posterUsername,
 				AvatarUrl: posterAvatarUrl,
+				WornBadge: wornBadges[poster.UserID],
 			})
 		}
 
@@ -82,6 +91,7 @@ func TopicsWithUser2Vo(data []*topics.Entity, categoryMap map[uint64]*category.E
 			AuthorId:       t.UserId,
 			Username:       username,
 			AvatarUrl:      avatarUrl,
+			WornBadge:      wornBadges[t.UserId],
 			ViewCount:      t.ViewCount,
 			CommentCount:   t.ReplyCount,
 			PinWeight:      t.PinWeight,

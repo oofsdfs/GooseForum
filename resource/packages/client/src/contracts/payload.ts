@@ -614,6 +614,7 @@ export interface MemberDirectoryPayload {
   username: string
   nickname: string
   avatarUrl: string
+  wornBadge?: UserBadgePayload | null
   bio: string
   prestige: number
   topicCount: number

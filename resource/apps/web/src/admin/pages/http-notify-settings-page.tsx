@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import type { AuthLocale } from "@gooseforum/runtime/i18n/auth";
 import type {
@@ -128,7 +129,7 @@ export function HttpNotifySettingsPage({
     }
   }
   return (
-    <main className="flex flex-1 flex-col gap-4 px-3 py-3 lg:px-4">
+    <AdminPage spacing="relaxed">
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{text("http")}</h2>
@@ -321,7 +322,7 @@ export function HttpNotifySettingsPage({
           </Suspense>
         </TabsContent>
       </Tabs>
-    </main>
+    </AdminPage>
   );
 }
 function normalize(e: HttpNotifyEndpoint): HttpNotifyEndpoint {

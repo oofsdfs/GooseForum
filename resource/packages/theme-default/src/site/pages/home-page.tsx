@@ -12,8 +12,10 @@ import {
 } from "@gooseforum/ui/components/empty";
 import { GooseLink } from "@gooseforum/runtime";
 import { RenderedContent } from "../content/rendered-content";
+import { SiteListPanel } from "../layout/site-panel";
 import {
   TopicListFooter,
+  TopicListToolbar,
   TopicListModeSwitch,
   TopicTable,
   useTopicList,
@@ -98,9 +100,17 @@ export function HomePageView({
           </div>
         </aside>
       ) : null}
-      <section className="overflow-hidden border-b bg-background lg:rounded-xl lg:border">
-        <div className="flex flex-col gap-3 border-b px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <SiteListPanel>
+        <TopicListToolbar
+          action={
+            <Button asChild className="shrink-0">
+              <GooseLink href="/publish">
+                <Plus data-icon="inline-start" />
+                {t("newTopic")}
+              </GooseLink>
+            </Button>
+          }
+        >
             <nav className="-m-1 flex min-w-0 gap-2 overflow-x-auto p-1">
               {page.tabs.map((tab) => (
                 <Button
@@ -129,14 +139,7 @@ export function HomePageView({
               t={t}
               onClick={list.switchMode}
             />
-          </div>
-          <Button asChild className="shrink-0">
-            <GooseLink href="/publish">
-              <Plus data-icon="inline-start" />
-              {t("newTopic")}
-            </GooseLink>
-          </Button>
-        </div>
+        </TopicListToolbar>
         <TopicTable
           topics={list.topics}
           showPinned={page.sort === "" || page.sort === "latest"}
@@ -162,7 +165,7 @@ export function HomePageView({
           onLoad={list.loadMore}
         />
         <div ref={list.sentinel} />
-      </section>
+      </SiteListPanel>
     </div>
   );
 }

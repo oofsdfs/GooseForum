@@ -18,6 +18,7 @@ import { Spinner } from "@gooseforum/ui/components/spinner";
 import { useGooseRuntime } from "@gooseforum/runtime";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { PageHeader } from "../layout/page-header";
+import { SitePanel } from "../layout/site-panel";
 
 export function AccessGroupsPageView() {
   const { t } = useTranslation("accessGroups");
@@ -94,7 +95,7 @@ export function AccessGroupsPageView() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
-      <section className="site-panel overflow-hidden rounded-xl border bg-background">
+      <SitePanel clip>
         {loading ? (
           <div className="flex min-h-40 items-center justify-center gap-2 text-sm text-muted-foreground">
             <Spinner />
@@ -155,9 +156,9 @@ export function AccessGroupsPageView() {
             </EmptyHeader>
           </Empty>
         )}
-      </section>
+      </SitePanel>
       {managed.length ? (
-        <section className="site-panel overflow-hidden rounded-xl border bg-background lg:mt-4">
+        <SitePanel clip className="lg:mt-4">
           <header className="border-b px-5 py-4">
             <h2 className="font-semibold">{t("applicationsToReview")}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -209,7 +210,7 @@ export function AccessGroupsPageView() {
               </article>
             ))}
           </div>
-        </section>
+        </SitePanel>
       ) : null}
     </main>
   );

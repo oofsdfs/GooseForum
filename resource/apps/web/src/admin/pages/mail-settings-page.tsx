@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GooseAdminApi, MailSettings } from "@gooseforum/client";
 import { Button } from "@gooseforum/ui/components/button";
@@ -87,7 +88,7 @@ export function MailSettingsPage({
     }
   }
   return (
-    <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+    <AdminPage>
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{text("mail")}</h2>
@@ -228,7 +229,7 @@ export function MailSettingsPage({
           </aside>
         </div>
       )}
-    </main>
+    </AdminPage>
   );
 }
 function F({

@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   GooseAdminApi,
@@ -142,7 +143,7 @@ export function SensitiveWordsSettingsPage({
     }
   }
   return (
-    <main className="flex flex-1 flex-col gap-4 px-3 py-3 lg:px-4">
+    <AdminPage spacing="relaxed">
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{text("sensitive")}</h2>
@@ -365,7 +366,7 @@ export function SensitiveWordsSettingsPage({
           </TableBody>
         </Table>
       </section>
-    </main>
+    </AdminPage>
   );
 }
 function F({

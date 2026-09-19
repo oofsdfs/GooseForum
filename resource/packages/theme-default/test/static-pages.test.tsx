@@ -716,7 +716,29 @@ describe("AppShell and static pages", () => {
         {
           ...userProfileProps().topics[0],
           participants: [
-            { id: 27, username: "hover-user", avatarUrl: "/hover.webp" },
+            {
+              id: 27,
+              username: "hover-user",
+              avatarUrl: "/hover.webp",
+              wornBadge: {
+                code: "list-badge",
+                type: "system",
+                grantMode: "manual",
+                name: "List badge",
+                description: "Not rendered by the default topic list",
+                iconType: "image",
+                iconKey: "list-badge",
+                iconUrl: "/list-badge.svg",
+                color: "blue",
+                level: "special",
+                isEnabled: true,
+                isWearable: true,
+                sortOrder: 1,
+                source: "manual",
+                reason: "",
+                grantedAt: "2026-09-01T08:00:00Z",
+              },
+            },
             { id: 28, username: "second-user", avatarUrl: "/second.webp" },
           ],
         },
@@ -730,6 +752,14 @@ describe("AppShell and static pages", () => {
 
     const avatar = document.querySelector('a[title="hover-user"]');
     expect(avatar).toBeTruthy();
+    expect(document.querySelector('img[src="/list-badge.svg"]')).toBeNull();
+    expect(document.querySelector('[data-slot="topic-list-toolbar"]')).toBeTruthy();
+    const categoryLinks = document.querySelectorAll(
+      '[data-slot="topic-category-link"]',
+    );
+    expect(categoryLinks.length).toBe(2);
+    expect(categoryLinks[0]?.hasAttribute("data-compact")).toBe(false);
+    expect(categoryLinks[1]?.getAttribute("data-compact")).toBe("true");
     const avatarStack = avatar?.closest('[data-slot="avatar-stack"]');
     expect(avatarStack?.classList.contains("pl-3")).toBe(false);
     expect(avatarStack?.getAttribute("style")).toContain("var(--avatar-size) + 1 * var(--avatar-step)");
@@ -1384,7 +1414,7 @@ describe("AppShell and static pages", () => {
     expect(screen.getByText("1 / 2")).toBeTruthy();
     const wornBadge = screen.getByAltText("Contributor badge");
     expect(wornBadge).toBeTruthy();
-    expect(wornBadge.parentElement?.classList.contains("z-10")).toBe(true);
+    expect(wornBadge.parentElement?.classList.contains("z-30")).toBe(true);
     expect(
       topicAside
         ?.querySelector('a[title="alice"] [data-slot="avatar"]')
@@ -1917,6 +1947,24 @@ describe("AppShell and static pages", () => {
             username: "alice",
             nickname: "Alice",
             avatarUrl: "/alice.webp",
+            wornBadge: {
+              code: "helper",
+              type: "system",
+              grantMode: "manual",
+              name: "Helper",
+              description: "Helpful member",
+              iconType: "image",
+              iconKey: "helper",
+              iconUrl: "/helper.svg",
+              color: "blue",
+              level: "special",
+              isEnabled: true,
+              isWearable: true,
+              sortOrder: 1,
+              source: "manual",
+              reason: "",
+              grantedAt: "2026-01-01 00:00:00",
+            },
             bio: "",
             prestige: 1_250,
             topicCount: 12,
@@ -1941,6 +1989,18 @@ describe("AppShell and static pages", () => {
     expect(screen.getByText("@alice")).toBeTruthy();
     expect(screen.getByText("这位成员还没有填写个人简介。")).toBeTruthy();
     expect(screen.getByText("1.3k")).toBeTruthy();
+    const wornBadge = document.querySelector('img[src="/helper.svg"]');
+    const memberAvatar = wornBadge?.parentElement?.parentElement?.querySelector(
+      '[data-slot="avatar"]',
+    );
+    expect(wornBadge?.parentElement?.parentElement?.classList.contains("isolate")).toBe(true);
+    expect(wornBadge?.parentElement?.classList.contains("-right-1")).toBe(true);
+    expect(wornBadge?.parentElement?.classList.contains("-left-1")).toBe(false);
+    expect(wornBadge?.parentElement?.classList.contains("z-30")).toBe(true);
+    expect(memberAvatar?.classList.contains("border-2")).toBe(false);
+    expect(memberAvatar?.classList.contains("shadow-sm")).toBe(false);
+    expect(memberAvatar?.classList.contains("after:hidden")).toBe(false);
+    expect(memberAvatar?.classList.contains("group-hover:ring-1")).toBe(true);
     expect(
       screen.getByRole("link", { name: /Alice/ }).getAttribute("href"),
     ).toBe("/u/7");

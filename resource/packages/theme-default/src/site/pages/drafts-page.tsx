@@ -13,6 +13,7 @@ import {
 } from "@gooseforum/ui/components/empty";
 import { GooseLink, useGooseRuntime } from "@gooseforum/runtime";
 import { PageHeader } from "../layout/page-header";
+import { SiteListPanel } from "../layout/site-panel";
 
 export function DraftsPageView({ page }: { page: DraftsPageProps }) {
   const { t } = useTranslation("drafts");
@@ -36,7 +37,7 @@ export function DraftsPageView({ page }: { page: DraftsPageProps }) {
           </Button>
         }
       />
-      <section className="overflow-hidden border-b bg-background lg:rounded-xl lg:border">
+      <SiteListPanel>
         <div className="hidden grid-cols-[minmax(0,1fr)_152px_132px] gap-4 border-b bg-muted/50 px-4 py-2 text-[11px] font-bold uppercase text-muted-foreground lg:grid">
           <span>{t("table.draft")}</span>
           <span className="text-right">{t("table.updatedAt")}</span>
@@ -64,7 +65,7 @@ export function DraftsPageView({ page }: { page: DraftsPageProps }) {
             </EmptyContent>
           </Empty>
         )}
-      </section>
+      </SiteListPanel>
     </main>
   );
 }

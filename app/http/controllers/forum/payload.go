@@ -431,17 +431,18 @@ type MembersPageProps struct {
 }
 
 type MemberDirectoryPayload struct {
-	ID           uint64 `json:"id"`
-	Username     string `json:"username"`
-	Nickname     string `json:"nickname"`
-	AvatarURL    string `json:"avatarUrl"`
-	Bio          string `json:"bio"`
-	Prestige     int64  `json:"prestige"`
-	TopicCount   uint   `json:"topicCount"`
-	ReplyCount   uint   `json:"replyCount"`
-	LastActiveAt string `json:"lastActiveAt,omitempty"`
-	JoinedAt     string `json:"joinedAt"`
-	URL          string `json:"url"`
+	ID           uint64                  `json:"id"`
+	Username     string                  `json:"username"`
+	Nickname     string                  `json:"nickname"`
+	AvatarURL    string                  `json:"avatarUrl"`
+	WornBadge    *badgeservice.UserBadge `json:"wornBadge,omitempty"`
+	Bio          string                  `json:"bio"`
+	Prestige     int64                   `json:"prestige"`
+	TopicCount   uint                    `json:"topicCount"`
+	ReplyCount   uint                    `json:"replyCount"`
+	LastActiveAt string                  `json:"lastActiveAt,omitempty"`
+	JoinedAt     string                  `json:"joinedAt"`
+	URL          string                  `json:"url"`
 }
 
 type LinksPageProps struct {
@@ -931,6 +932,7 @@ func buildTopicPayloads(topics []*vo.TopicsSimpleVo) []TopicPayload {
 				ID:        topic.AuthorId,
 				Username:  topic.Username,
 				AvatarURL: topic.AvatarUrl,
+				WornBadge: topic.WornBadge,
 			},
 			Participants:   buildParticipants(topic),
 			Categories:     categories,
@@ -954,9 +956,9 @@ func buildParticipants(topic *vo.TopicsSimpleVo) []TopicAuthorPayload {
 		participants = append(participants, user)
 	}
 	for _, poster := range topic.Posters {
-		add(TopicAuthorPayload{ID: poster.Id, Username: poster.Username, AvatarURL: poster.AvatarUrl})
+		add(TopicAuthorPayload{ID: poster.Id, Username: poster.Username, AvatarURL: poster.AvatarUrl, WornBadge: poster.WornBadge})
 	}
-	add(TopicAuthorPayload{ID: topic.AuthorId, Username: topic.Username, AvatarURL: topic.AvatarUrl})
+	add(TopicAuthorPayload{ID: topic.AuthorId, Username: topic.Username, AvatarURL: topic.AvatarUrl, WornBadge: topic.WornBadge})
 	if len(participants) > 4 {
 		return participants[:4]
 	}

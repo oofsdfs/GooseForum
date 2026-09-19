@@ -11,8 +11,10 @@ import {
 } from "@gooseforum/ui/components/empty";
 import { GooseLink } from "@gooseforum/runtime";
 import { PageHeader } from "../layout/page-header";
+import { SiteListPanel } from "../layout/site-panel";
 import {
   TopicListFooter,
+  TopicListToolbar,
   TopicListModeSwitch,
   TopicTable,
   useTopicList,
@@ -56,9 +58,17 @@ export function CategoryPageView({
           </span>
         }
       />
-      <section className="overflow-hidden border-b bg-background lg:rounded-xl lg:border">
-        <div className="flex flex-col gap-3 border-b px-4 py-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <SiteListPanel>
+        <TopicListToolbar
+          action={
+            <Button asChild className="shrink-0">
+              <GooseLink href="/publish">
+                <Plus data-icon="inline-start" />
+                {t("newTopic")}
+              </GooseLink>
+            </Button>
+          }
+        >
             <nav
               className="flex min-w-0 gap-2 overflow-x-auto"
               aria-label={t("topic")}
@@ -84,14 +94,7 @@ export function CategoryPageView({
               t={t}
               onClick={list.switchMode}
             />
-          </div>
-          <Button asChild className="shrink-0">
-            <GooseLink href="/publish">
-              <Plus data-icon="inline-start" />
-              {t("newTopic")}
-            </GooseLink>
-          </Button>
-        </div>
+        </TopicListToolbar>
         <TopicTable
           topics={list.topics}
           showCategories={false}
@@ -120,7 +123,7 @@ export function CategoryPageView({
           onLoad={list.loadMore}
         />
         <div ref={list.sentinel} />
-      </section>
+      </SiteListPanel>
     </div>
   );
 }

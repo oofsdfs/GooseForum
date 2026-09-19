@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -211,7 +212,7 @@ export function SiteChromeManagementPage({
     setActiveSidebarItem(sidebarList(config, data.scope)[data.index] || null);
   }
   return (
-    <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+    <AdminPage>
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{text("chrome")}</h2>
@@ -513,7 +514,7 @@ export function SiteChromeManagementPage({
           setFooterOpen(false);
         }}
       />
-    </main>
+    </AdminPage>
   );
 }
 function PreviewSection({

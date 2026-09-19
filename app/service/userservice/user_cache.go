@@ -11,6 +11,7 @@ import (
 	"github.com/leancodebox/GooseForum/app/http/controllers/vo"
 	"github.com/leancodebox/GooseForum/app/models/forum/userStatistics"
 	"github.com/leancodebox/GooseForum/app/models/forum/users"
+	"github.com/leancodebox/GooseForum/app/models/hotdataserve"
 	"github.com/leancodebox/GooseForum/app/service/badgeservice"
 	"github.com/leancodebox/GooseForum/app/service/permission"
 )
@@ -333,6 +334,7 @@ func SetWornBadge(userID uint64, badgeCode string) bool {
 		return user
 	}, userInfoTTL)
 	InvalidateUserPublicProfileCache(userID)
+	hotdataserve.ClearTopicListCache()
 	return true
 }
 

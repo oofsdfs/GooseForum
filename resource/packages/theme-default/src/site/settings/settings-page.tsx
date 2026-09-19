@@ -29,7 +29,9 @@ import {
   TabsTrigger,
 } from "@gooseforum/ui/components/tabs";
 import { ProfileAvatar } from "../users/profile-avatar";
+import { SitePanel } from "../layout/site-panel";
 import { ProfileBadge } from "../users/profile-badge";
+import { ProfileIdentity } from "../users/profile-identity";
 import { AccountSettings } from "./settings-account";
 import { ConnectionsSettings } from "./settings-connections";
 import { PrivacySettings } from "./settings-privacy";
@@ -148,7 +150,7 @@ export function SettingsPageView({
   const displayName = profile.nickname || username;
   return (
     <main className="min-w-0 pb-8">
-      <section className="site-panel overflow-hidden rounded-xl border bg-background">
+      <SitePanel clip>
         <div
           data-slot="profile-cover"
           className="relative h-20 border-b bg-muted bg-cover bg-center lg:h-24"
@@ -204,20 +206,12 @@ export function SettingsPageView({
                 className="hidden"
                 onChange={(event) => crop.selectFile(event.target.files?.[0])}
               />
-              <div className="min-w-0 flex-1 pt-3">
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <h1 className="truncate text-2xl font-bold leading-tight">
-                    {displayName}
-                  </h1>
-                  <Badge variant="secondary">{t("editing")}</Badge>
-                </div>
-                <p className="mt-1 text-sm font-medium text-muted-foreground">
-                  @{username}
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-foreground/75">
-                  {profile.bio || profile.signature || t("emptyBio")}
-                </p>
-              </div>
+              <ProfileIdentity
+                displayName={displayName}
+                username={username}
+                description={profile.bio || profile.signature || t("emptyBio")}
+                badges={<Badge variant="secondary">{t("editing")}</Badge>}
+              />
             </div>
           </div>
           <Stats page={page} />
@@ -416,7 +410,7 @@ export function SettingsPageView({
             />
           </TabsContent>
         </Tabs>
-      </section>
+      </SitePanel>
       <AvatarCropDialog crop={crop} />
     </main>
   );

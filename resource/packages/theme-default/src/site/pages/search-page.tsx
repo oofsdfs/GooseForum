@@ -14,6 +14,7 @@ import {
 import { Input } from "@gooseforum/ui/components/input";
 import { GooseLink, useGooseRuntime } from "@gooseforum/runtime";
 import { PageHeader } from "../layout/page-header";
+import { SiteListPanel } from "../layout/site-panel";
 import { compactNumber, TopicTable } from "../topics/topic-list";
 
 export function SearchPageView({ page }: { page: SearchPageProps }) {
@@ -85,7 +86,7 @@ export function SearchPageView({ page }: { page: SearchPageProps }) {
           </form>
         }
       />
-      <section className="overflow-hidden border-b bg-background lg:rounded-xl lg:border">
+      <SiteListPanel>
         {page.topics.length ? (
           <>
             <TopicTable topics={page.topics} t={topicT} />
@@ -136,7 +137,7 @@ export function SearchPageView({ page }: { page: SearchPageProps }) {
             </EmptyHeader>
           </Empty>
         )}
-      </section>
+      </SiteListPanel>
     </main>
   );
 }

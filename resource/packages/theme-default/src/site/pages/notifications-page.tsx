@@ -24,11 +24,16 @@ import {
   EmptyTitle,
 } from "@gooseforum/ui/components/empty";
 import { Tabs, TabsList, TabsTrigger } from "@gooseforum/ui/components/tabs";
+import { cn } from "@gooseforum/ui/lib/utils";
 import { GooseLink, useGooseRuntime } from "@gooseforum/runtime";
 import { announceUnreadStatus } from "@gooseforum/runtime/unread-status";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { PageHeader } from "../layout/page-header";
+import { SiteListPanel } from "../layout/site-panel";
 import { UserCardPopover } from "../users/user-card-popover";
+
+const notificationTabClassName =
+  "h-8 flex-none rounded-md border border-transparent px-3 font-semibold shadow-none hover:bg-background/70 hover:text-foreground data-active:bg-background data-active:text-foreground data-active:shadow-sm data-active:ring-1 data-active:ring-border";
 
 type ListState = {
   items: NotificationPayload[];
@@ -213,7 +218,7 @@ export function NotificationsPageView({
       {error ? (
         <p className="px-4 py-2 text-sm text-destructive lg:px-0">{error}</p>
       ) : null}
-      <section className="overflow-hidden border-b bg-background lg:rounded-xl lg:border">
+      <SiteListPanel>
         <Tabs
           value={filter}
           onValueChange={(value) => setFilter(value as NotificationFilter)}
@@ -222,13 +227,13 @@ export function NotificationsPageView({
           <TabsList className="h-auto w-full justify-start gap-1 rounded-none border-b bg-muted/50 p-2 group-data-horizontal/tabs:h-auto">
             <TabsTrigger
               value="all"
-              className="h-8 flex-none rounded-md border border-transparent px-3 font-semibold shadow-none hover:bg-background/70 hover:text-foreground data-active:bg-background data-active:text-foreground data-active:shadow-sm data-active:ring-1 data-active:ring-border"
+              className={notificationTabClassName}
             >
               {t("tabs.all")}
             </TabsTrigger>
             <TabsTrigger
               value="unread"
-              className="h-8 flex-none rounded-md border border-transparent px-3 font-semibold shadow-none hover:bg-background/70 hover:text-foreground data-active:bg-background data-active:text-foreground data-active:shadow-sm data-active:ring-1 data-active:ring-border"
+              className={notificationTabClassName}
             >
               {t("tabs.unread")}
               {unreadCount ? (
@@ -284,7 +289,7 @@ export function NotificationsPageView({
             t("noMore")
           ) : null}
         </div>
-      </section>
+      </SiteListPanel>
     </main>
   );
 }
@@ -313,11 +318,13 @@ function NotificationRow({
   const target = targetUrl(item, actorUrl);
   return (
     <article
-      className={
+      data-read={item.isRead || undefined}
+      className={cn(
+        "relative grid grid-cols-[34px_minmax(0,1fr)] gap-3 px-3 py-2.5 lg:grid-cols-[34px_minmax(0,1fr)_116px_40px]",
         item.isRead
-          ? "relative grid grid-cols-[34px_minmax(0,1fr)] gap-3 px-3 py-2.5 hover:bg-muted/40 lg:grid-cols-[34px_minmax(0,1fr)_116px_40px]"
-          : "relative grid grid-cols-[34px_minmax(0,1fr)] gap-3 bg-primary/5 px-3 py-2.5 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary hover:bg-primary/10 lg:grid-cols-[34px_minmax(0,1fr)_116px_40px]"
-      }
+          ? "hover:bg-muted/40"
+          : "bg-primary/5 before:absolute before:inset-y-0 before:left-0 before:w-0.5 before:bg-primary hover:bg-primary/10",
+      )}
     >
       <span className="flex size-8 items-center justify-center rounded-md bg-muted text-muted-foreground">
         <Icon className="size-4" />

@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLatestRequest } from '../use-latest-request'
 import type { AccessControlOverview, AccessGroup, AccessGroupMember, GooseAdminApi } from '@gooseforum/client'
@@ -75,7 +76,7 @@ export function AccessGroupsManagementPage({ api, text, onNavigate }: { api: Goo
     setPanel('permissions')
   }
 
-  return <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+  return <AdminPage>
     <header className="flex items-center justify-between gap-3">
       <div className="min-w-0"><h2 className="text-lg font-semibold tracking-tight">{text('title')}</h2><p className="truncate text-xs text-muted-foreground">{text('description')}</p></div>
       <Button size="sm" onClick={() => setGroupForm({ ...emptyGroupForm })}><Plus data-icon="inline-start" />{text('create')}</Button>
@@ -103,7 +104,7 @@ export function AccessGroupsManagementPage({ api, text, onNavigate }: { api: Goo
     <GroupEditor value={groupForm} api={api} text={text} onClose={() => setGroupForm(null)} onSaved={async (id) => { setGroupForm(null); await load(id) }} />
     <ConfirmDialog open={Boolean(deletingGroup)} title={text('deleteGroupTitle')} description={text('deleteGroupConfirm')} confirmText={text('delete')} apiCall={async () => { if (deletingGroup) await api.accessGroups.delete(deletingGroup.id) }} onClose={() => setDeletingGroup(null)} onDone={async () => { toast.success(text('groupDeleted')); setDeletingGroup(null); await load(0) }} text={text} />
     <ConfirmDialog open={Boolean(deletingMember)} title={text('removeMemberTitle')} description={text('removeMemberConfirm')} confirmText={text('removeMember')} apiCall={async () => { if (deletingMember && selectedGroup) await api.accessGroups.deleteMember(selectedGroup.id, deletingMember.id) }} onClose={() => setDeletingMember(null)} onDone={async () => { toast.success(text('memberDeleted')); setDeletingMember(null); await load(selectedGroupId) }} text={text} />
-  </main>
+  </AdminPage>
 }
 
 function GroupDetails({ group, members, overview, panel, api, text, loading, onPanelChange, onEdit, onDelete, onDeleteMember, onReload, onNavigate }: { group: AccessGroup; members: AccessGroupMember[]; overview: AccessControlOverview; panel: 'permissions' | 'members'; api: GooseAdminApi; text: Text; loading: boolean; onPanelChange(value: 'permissions' | 'members'): void; onEdit(): void; onDelete(): void; onDeleteMember(member: AccessGroupMember): void; onReload(id?: number): Promise<void>; onNavigate(path: string): void }) {

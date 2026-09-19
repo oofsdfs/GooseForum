@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { AdminCategory, AdminTopic, GooseAdminApi, ReviewPost, TopicSource } from '@gooseforum/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@gooseforum/ui/components/avatar'
@@ -72,7 +73,7 @@ export function PostsManagementPage({ api, text }: { api: GooseAdminApi; text: T
   const rangeStart = visibleCount ? (page - 1) * pageSize + 1 : 0
   const rangeEnd = visibleCount ? rangeStart + visibleCount - 1 : 0
 
-  return <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+  return <AdminPage>
     <header><h2 className="text-lg font-semibold tracking-tight">{text('title')}</h2><p className="text-xs text-muted-foreground">{text('description')}</p></header>
     <div className="flex flex-wrap items-center gap-1.5"><FilterSelect value={kind} label={text('topics')} onChange={(value) => { setKind(value as 'topic' | 'post'); setPage(1) }} options={[['topic', text('topics')], ['post', text('replies')]]} /><FilterSelect value={moderationStatus} label={text('allReviews')} onChange={(value) => { setModerationStatus(value); setPage(1) }} options={[['all', text('allReviews')], ['pending', text('pending')], ['approved', text('approved')], ['rejected', text('rejected')], ['none', text('none')]]} />{kind === 'topic' ? <FilterSelect value={categoryId} label={text('allCategories')} onChange={(value) => { setCategoryId(value); setPage(1) }} options={[['all', text('allCategories')], ...categories.map((category) => [String(category.id), category.category] as [string, string])]} /> : null}</div>
     <section className="overflow-hidden rounded-lg border bg-background"><div className="flex flex-col gap-2 border-b bg-muted/20 p-2 lg:flex-row lg:items-center lg:justify-between"><form className="flex min-w-0 flex-1 gap-1.5 lg:max-w-xl" onSubmit={(event) => { event.preventDefault(); setAppliedSearch(search.trim()); setPage(1) }}><div className="relative min-w-0 flex-1"><Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" /><Input value={search} onChange={(event) => setSearch(event.target.value)} className="h-8 pl-8" placeholder={text('search')} /></div><Button type="submit" size="sm">{text('searchAction')}</Button>{appliedSearch ? <Button type="button" variant="ghost" size="sm" onClick={() => { setSearch(''); setAppliedSearch(''); setPage(1) }}>{text('clear')}</Button> : null}</form><div className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground"><Button variant="outline" size="sm" disabled={loading} onClick={() => void load()}><RefreshCw data-icon="inline-start" className={loading ? 'animate-spin' : undefined} />{text('refresh')}</Button><span>{rangeStart}-{rangeEnd}</span><Select value={String(pageSize)} onValueChange={(value) => { setPageSize(Number(value)); setPage(1) }}><SelectTrigger size="sm" className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectGroup>{[10, 20, 50].map((size) => <SelectItem key={size} value={String(size)}>{size}</SelectItem>)}</SelectGroup></SelectContent></Select><Button variant="outline" size="sm" disabled={page <= 1 || loading} onClick={() => setPage(page - 1)}>{text('previous')}</Button><span>{text('page')} {page}</span><Button variant="outline" size="sm" disabled={!hasNext || loading} onClick={() => setPage(page + 1)}>{text('next')}</Button></div></div>
@@ -84,7 +85,7 @@ export function PostsManagementPage({ api, text }: { api: GooseAdminApi; text: T
     <ReviewReplyDialog reply={reviewReply} api={api} text={text} onClose={() => setReviewReply(null)} onSaved={load} />
     <TopicActionDialog topic={processTopic} mode="process" api={api} text={text} onClose={() => setProcessTopic(null)} onSaved={load} />
     <TopicActionDialog topic={deleteTopic} mode="delete" api={api} text={text} onClose={() => setDeleteTopic(null)} onSaved={load} />
-  </main>
+  </AdminPage>
 }
 
 function TopicList({ topics, categories, text, onSource, onCategories, onPin, onProcess, onDelete }: { topics: AdminTopic[]; categories: AdminCategory[]; text: Text; onSource(topic: AdminTopic): void; onCategories(topic: AdminTopic): void; onPin(topic: AdminTopic): void; onProcess(topic: AdminTopic): void; onDelete(topic: AdminTopic): void }) {

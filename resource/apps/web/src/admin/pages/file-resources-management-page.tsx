@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useLatestRequest } from '../use-latest-request'
 import { useCallback, useEffect, useState } from "react";
 import type { AdminFileResource, GooseAdminApi } from "@gooseforum/client";
@@ -67,7 +68,7 @@ export function FileResourcesManagementPage({
     void load();
   }, [load]);
   return (
-    <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+    <AdminPage>
       <header className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">{text("files")}</h2>
@@ -200,7 +201,7 @@ export function FileResourcesManagementPage({
         </footer>
       </section>
       <Preview item={preview} text={text} onClose={() => setPreview(null)} />
-    </main>
+    </AdminPage>
   );
 }
 function Preview({

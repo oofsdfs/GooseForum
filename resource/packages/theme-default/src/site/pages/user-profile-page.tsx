@@ -33,7 +33,9 @@ import { cn } from "@gooseforum/ui/lib/utils";
 import { GooseLink, useGooseRuntime } from "@gooseforum/runtime";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { ProfileAvatar } from "../users/profile-avatar";
+import { SitePanel } from "../layout/site-panel";
 import { ProfileBadge } from "../users/profile-badge";
+import { ProfileIdentity } from "../users/profile-identity";
 import { UserActivity, UserActivityItem } from "../users/user-activity";
 
 const socialProfiles = {
@@ -76,7 +78,7 @@ export function UserProfilePageView({ page }: { page: UserProfileProps }) {
 
   return (
     <article className="pb-12">
-      <section className="site-panel overflow-hidden rounded-xl border bg-background">
+      <SitePanel clip>
         <div
           data-slot="profile-cover"
           className="h-20 border-b bg-muted bg-cover bg-center lg:h-24"
@@ -95,40 +97,36 @@ export function UserProfilePageView({ page }: { page: UserProfileProps }) {
                 badge={page.user.wornBadge}
                 className="-mt-9 size-24 lg:-mt-10 lg:size-28"
               />
-              <div className="min-w-0 flex-1 pt-3">
-                <div className="flex min-w-0 flex-wrap items-center gap-2">
-                  <h1 className="truncate text-2xl font-bold leading-tight">
-                    {displayName}
-                  </h1>
-                  {page.user.isAdmin ? (
-                    <Badge variant="secondary" className="text-warning">
-                      Admin
-                    </Badge>
-                  ) : null}
-                  {page.user.isOnline ? (
-                    <Badge variant="secondary" className="text-success">
-                      <Radio data-icon="inline-start" />
-                      {t("online")}
-                    </Badge>
-                  ) : null}
-                </div>
-                <div className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5">
-                  <p className="truncate text-sm font-medium text-muted-foreground">
-                    @{page.user.username}
-                  </p>
-                  {page.isOwnProfile ? (
+              <ProfileIdentity
+                displayName={displayName}
+                username={page.user.username}
+                description={page.user.bio || page.user.signature || t("emptyBio")}
+                badges={
+                  <>
+                    {page.user.isAdmin ? (
+                      <Badge variant="secondary" className="text-warning">
+                        Admin
+                      </Badge>
+                    ) : null}
+                    {page.user.isOnline ? (
+                      <Badge variant="secondary" className="text-success">
+                        <Radio data-icon="inline-start" />
+                        {t("online")}
+                      </Badge>
+                    ) : null}
+                  </>
+                }
+                usernameActions={
+                  page.isOwnProfile ? (
                     <Button asChild variant="ghost" size="xs">
                       <GooseLink href={page.settingsUrl}>
                         <Settings data-icon="inline-start" />
                         {t("editProfile")}
                       </GooseLink>
                     </Button>
-                  ) : null}
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-foreground/75">
-                  {page.user.bio || page.user.signature || t("emptyBio")}
-                </p>
-              </div>
+                  ) : null
+                }
+              />
             </div>
             {!page.isOwnProfile && (page.canMessage || page.canFollow) ? (
               <div className="flex shrink-0 flex-wrap items-center gap-2">
@@ -220,7 +218,7 @@ export function UserProfilePageView({ page }: { page: UserProfileProps }) {
         ) : (
           <BadgeDirectory page={page} t={t} />
         )}
-      </section>
+      </SitePanel>
     </article>
   );
 }

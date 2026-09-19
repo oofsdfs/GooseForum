@@ -7,6 +7,7 @@ import (
 	"github.com/leancodebox/GooseForum/app/models/forum/category"
 	"github.com/leancodebox/GooseForum/app/models/forum/userStatistics"
 	"github.com/leancodebox/GooseForum/app/models/forum/users"
+	"github.com/leancodebox/GooseForum/app/service/badgeservice"
 )
 
 func TestBuildCategoriesPagePropsPreservesVisibleOrderAndCounts(t *testing.T) {
@@ -32,10 +33,12 @@ func TestBuildMembersPagePropsExposesOnlyDirectoryFields(t *testing.T) {
 	active := time.Date(2026, 9, 2, 12, 30, 0, 0, time.UTC)
 	result := users.PublicPageResult{
 		HasPrevious: true, HasNext: true,
-		Data: []users.EntityComplete{{Id: 9, Username: "goose", Email: "private@example.com", CreatedAt: joined}},
+		Data: []users.PublicDirectoryUser{{Id: 9, Username: "goose", CreatedAt: joined}},
 	}
 	props := buildMembersPageProps(result, map[uint64]*userStatistics.Entity{
 		9: {UserId: 9, TopicCount: 3, ReplyCount: 11, LastActiveTime: active},
+	}, map[uint64]*badgeservice.UserBadge{
+		9: {Badge: badgeservice.Badge{Code: "helper", Name: "Helper"}},
 	})
 
 	if props.PreviousURL != "/members?after=9" || !props.Pagination.HasNext || props.Pagination.NextURL != "/members?before=9" {
@@ -44,6 +47,9 @@ func TestBuildMembersPagePropsExposesOnlyDirectoryFields(t *testing.T) {
 	member := props.Members[0]
 	if member.Nickname != "goose" || member.TopicCount != 3 || member.ReplyCount != 11 {
 		t.Fatalf("member = %#v", member)
+	}
+	if member.WornBadge == nil || member.WornBadge.Code != "helper" {
+		t.Fatalf("member worn badge = %#v", member.WornBadge)
 	}
 	if member.JoinedAt != "2025-07" || member.LastActiveAt != "2026-09-02 12:30:00" {
 		t.Fatalf("member dates = %q/%q", member.JoinedAt, member.LastActiveAt)

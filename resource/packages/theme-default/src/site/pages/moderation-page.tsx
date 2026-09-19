@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useState, type ComponentType } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type ComponentType,
+  type ReactNode,
+} from "react";
 import type {
   ModerationLogItem,
   ModerationPageProps,
@@ -423,7 +429,7 @@ function ReportsPanel({
           />
         )}
         {loaded && (items.length || hasMore) ? (
-          <footer className="border-t px-4 py-3 text-center">
+          <PanelFooter>
             {hasMore ? (
               <Button
                 variant="ghost"
@@ -439,7 +445,7 @@ function ReportsPanel({
                 {t("reports.noMore")}
               </span>
             )}
-          </footer>
+          </PanelFooter>
         ) : null}
       </div>
     </section>
@@ -531,13 +537,13 @@ function BlockedPanel({
           />
         )}
         {page.pagination.hasNext ? (
-          <footer className="border-t px-4 py-3 text-center">
+          <PanelFooter>
             <Button asChild variant="outline" size="sm">
               <GooseLink href={page.pagination.nextUrl}>
                 {t("blocked.next")}
               </GooseLink>
             </Button>
-          </footer>
+          </PanelFooter>
         ) : null}
       </div>
     </section>
@@ -620,7 +626,7 @@ function LogsPanel({
           />
         )}
         {loaded && (items.length || hasMore) ? (
-          <footer className="border-t px-4 py-3 text-center">
+          <PanelFooter>
             {hasMore ? (
               <Button
                 variant="ghost"
@@ -636,12 +642,16 @@ function LogsPanel({
                 {t("logs.noMore")}
               </span>
             )}
-          </footer>
+          </PanelFooter>
         ) : null}
       </div>
     </section>
   );
 }
+function PanelFooter({ children }: { children: ReactNode }) {
+  return <footer className="border-t px-4 py-3 text-center">{children}</footer>;
+}
+
 function Guidance({ t }: { t: Translate }) {
   return (
     <section className="p-3 lg:p-4">

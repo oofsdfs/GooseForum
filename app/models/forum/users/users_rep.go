@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/leancodebox/GooseForum/app/bundles/algorithm"
 	"github.com/leancodebox/GooseForum/app/bundles/pageutil"
@@ -139,7 +140,24 @@ type PublicPageQuery struct {
 type PublicPageResult struct {
 	HasPrevious bool
 	HasNext     bool
-	Data        []EntityComplete
+	Data        []PublicDirectoryUser
+}
+
+// PublicDirectoryUser is the intentionally small read model used by the
+// public member directory.
+type PublicDirectoryUser struct {
+	Id            uint64
+	Username      string
+	Nickname      string
+	AvatarUrl     string
+	Bio           string
+	Prestige      int64
+	WornBadgeCode string
+	CreatedAt     time.Time
+}
+
+func (user *PublicDirectoryUser) GetWebAvatarUrl() string {
+	return (&EntityComplete{AvatarUrl: user.AvatarUrl}).GetWebAvatarUrl()
 }
 
 // PublicPage returns only the columns needed by the public member directory.
@@ -147,7 +165,7 @@ type PublicPageResult struct {
 func PublicPage(q PublicPageQuery) PublicPageResult {
 	q.PageSize = pageutil.BoundPageSize(q.PageSize)
 	listQuery := builder().
-		Select("id", "username", "nickname", "avatar_url", "bio", "prestige", "created_at").
+		Model(&EntityComplete{}).
 		Where("deleted_at IS NULL").
 		Where("is_frozen = ?", StatusNormal)
 	ascending := q.AfterID > 0
@@ -160,7 +178,7 @@ func PublicPage(q PublicPageQuery) PublicPageResult {
 		listQuery = listQuery.Order(queryopt.Desc(pid))
 	}
 
-	var list []EntityComplete
+	var list []PublicDirectoryUser
 	listQuery.
 		Limit(q.PageSize + 1).
 		Find(&list)

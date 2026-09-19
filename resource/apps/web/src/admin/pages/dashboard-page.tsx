@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { lazy, Suspense, useEffect, useState } from "react";
 import type {
   DailyTraffic,
@@ -120,7 +121,7 @@ export default function DashboardPage({
     { label: text("links"), value: stats?.linksCount, icon: Link },
   ];
   return (
-    <main className="flex flex-1 flex-col gap-4 px-3 py-3 lg:px-4">
+    <AdminPage spacing="relaxed">
       <header className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">{text("title")}</h2>
@@ -225,7 +226,7 @@ export default function DashboardPage({
           </div>
         </section>
       </div>
-    </main>
+    </AdminPage>
   );
 }
 

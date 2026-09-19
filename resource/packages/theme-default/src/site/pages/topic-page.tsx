@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { ReactNode } from "react";
 import type {
   LayoutPayload,
   PostPayload,
@@ -1022,6 +1023,29 @@ export function TopicPageView({
 }
 
 type Translate = ReturnType<typeof useTranslation>["t"];
+
+function PostActionGroup({
+  placement,
+  children,
+}: {
+  placement: "header" | "topic";
+  children: ReactNode;
+}) {
+  return (
+    <div
+      data-slot={placement === "header" ? "post-actions" : "topic-actions"}
+      className={cn(
+        "[&_button]:size-9 [&_button]:gap-0 [&_button]:p-0! [&_svg]:size-[18px]! [&_svg]:stroke-2",
+        placement === "header"
+          ? "contents lg:flex lg:shrink-0 lg:items-center lg:gap-1.5 lg:[&_button]:size-6 lg:[&_svg]:size-3!"
+          : "col-span-2 row-start-3 flex min-w-0 flex-wrap items-center gap-0 lg:mt-4 lg:gap-2 lg:border-t lg:pt-3 lg:[&_button]:h-7 lg:[&_button]:w-auto lg:[&_button]:gap-1 lg:[&_button]:px-2.5! lg:[&_svg]:size-3.5!",
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 function PostRow({
   post,
   target,
@@ -1092,7 +1116,7 @@ function PostRow({
               </time>
             </div>
           </div>
-          <div data-slot="post-actions" className="contents [&_button]:size-9 [&_button]:gap-0 [&_button]:p-0! [&_svg]:size-[18px]! [&_svg]:stroke-2 lg:flex lg:shrink-0 lg:items-center lg:gap-1.5 lg:[&_button]:size-6 lg:[&_svg]:size-3!">
+          <PostActionGroup placement="header">
             <div className="col-start-3 row-start-1 flex items-start justify-end gap-0 self-start lg:contents">
             {post.isOwnPost ? (
               <>
@@ -1171,7 +1195,7 @@ function PostRow({
             >
               {formatDate(post.createdAt, locale)}
             </time>
-          </div>
+          </PostActionGroup>
         </header>
         <div data-slot="post-body" className="col-span-3 row-start-2 min-w-0 pt-1 lg:pt-0">
         {post.replyToPostId ? <ReplyReference topicId={post.topicId} target={target} t={t} /> : null}
@@ -1199,7 +1223,7 @@ function PostRow({
         ) : null}
         </div>
         {first ? (
-          <div className="col-span-2 row-start-3 flex min-w-0 flex-wrap items-center gap-0 [&_button]:size-9 [&_button]:gap-0 [&_button]:p-0! [&_svg]:size-[18px]! [&_svg]:stroke-2 lg:mt-4 lg:gap-2 lg:border-t lg:pt-3 lg:[&_button]:h-7 lg:[&_button]:w-auto lg:[&_button]:gap-1 lg:[&_button]:px-2.5! lg:[&_svg]:size-3.5!">
+          <PostActionGroup placement="topic">
             <ActionButton
               tone="like"
               active={liked}
@@ -1249,7 +1273,7 @@ function PostRow({
                 <span className="sr-only lg:not-sr-only">{t(topicStatus === 1 ? "moderationUnban" : "moderationBan")}</span>
               </Button>
             ) : null}
-          </div>
+          </PostActionGroup>
         ) : null}
       </div>
     </article>
@@ -1483,17 +1507,13 @@ function PostPositionRail({
 
   return (
     <div className="border-t px-3 py-2">
-      <Button
-        type="button"
-        variant="ghost"
-        className="mb-3 block max-w-full truncate px-0 text-left text-base font-semibold leading-tight text-muted-foreground hover:bg-transparent hover:text-foreground"
+      <PositionJumpButton
+        placement="start"
+        label={startLabel}
         title={t("earliestContent")}
-        aria-label={`${t("earliestContent")}: ${startLabel}`}
         disabled={busy}
         onClick={() => onSelect(1)}
-      >
-        {startLabel}
-      </Button>
+      />
       <div className="grid h-48 grid-cols-[24px_minmax(0,1fr)] gap-3">
         <Slider
           orientation="vertical"
@@ -1527,20 +1547,48 @@ function PostPositionRail({
           </div>
         </div>
       </div>
-      <Button
-        type="button"
-        variant="ghost"
-        className="mt-3 block max-w-full truncate px-0 text-left text-base font-semibold leading-tight text-muted-foreground hover:bg-transparent hover:text-foreground"
+      <PositionJumpButton
+        placement="end"
+        label={endLabel}
         title={t("latestReply")}
-        aria-label={`${t("latestReply")}: ${endLabel}`}
         disabled={busy}
         onClick={() => onSelect(max)}
-      >
-        {endLabel}
-      </Button>
+      />
     </div>
   );
 }
+
+function PositionJumpButton({
+  placement,
+  label,
+  title,
+  disabled,
+  onClick,
+}: {
+  placement: "start" | "end";
+  label: string;
+  title: string;
+  disabled: boolean;
+  onClick(): void;
+}) {
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      className={cn(
+        "block max-w-full truncate px-0 text-left text-base font-semibold leading-tight text-muted-foreground hover:bg-transparent hover:text-foreground",
+        placement === "start" ? "mb-3" : "mt-3",
+      )}
+      title={title}
+      aria-label={`${title}: ${label}`}
+      disabled={disabled}
+      onClick={onClick}
+    >
+      {label}
+    </Button>
+  );
+}
+
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="flex items-center justify-between gap-4">

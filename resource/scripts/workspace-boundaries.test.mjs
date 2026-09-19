@@ -48,6 +48,24 @@ test('Next host depends on shared packages rather than the Vite host', () => {
   }
 })
 
+test('frontend source avoids deep parent-relative imports', () => {
+  const directories = [
+    join(root, 'apps/web/src'),
+    join(root, 'packages/theme-default/src'),
+  ]
+  for (const directory of directories) {
+    for (const file of sources(directory)) {
+      const source = readFileSync(file, 'utf8')
+      for (const { fileName: specifier } of ts.preProcessFile(source, true, true).importedFiles) {
+        assert(
+          !specifier.startsWith('../../'),
+          `${file}: deep relative import ${specifier}; use a package boundary or source alias`,
+        )
+      }
+    }
+  }
+})
+
 function sources(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap(entry => {
     const file = join(directory, entry.name)

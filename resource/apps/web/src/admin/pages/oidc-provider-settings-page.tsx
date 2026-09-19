@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useRef, useState } from "react";
 import type {
   GooseAdminApi,
@@ -179,7 +180,7 @@ export function OIDCProviderSettingsPage({
     }
   }
   return (
-    <main className="flex flex-1 flex-col gap-4 px-3 py-3 lg:px-4">
+    <AdminPage spacing="relaxed">
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{text("oidc")}</h2>
@@ -373,7 +374,7 @@ export function OIDCProviderSettingsPage({
           }
         }}
       />
-    </main>
+    </AdminPage>
   );
 }
 function ClientEditor({

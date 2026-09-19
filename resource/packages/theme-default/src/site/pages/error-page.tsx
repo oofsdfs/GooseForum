@@ -10,6 +10,7 @@ import {
   EmptyTitle,
 } from "@gooseforum/ui/components/empty";
 import { GooseLink } from "@gooseforum/runtime";
+import { SitePanel } from "../layout/site-panel";
 
 export function ErrorPageView({ page }: { page: ErrorPageProps }) {
   const { t } = useTranslation("error");
@@ -28,7 +29,7 @@ export function ErrorPageView({ page }: { page: ErrorPageProps }) {
   }
   return (
     <main className="min-w-0 pb-8">
-      <section className="site-panel overflow-hidden rounded-xl border bg-background">
+      <SitePanel clip>
         <Empty className="min-h-72 border-0">
           <EmptyHeader>
             <EmptyTitle className="text-lg">
@@ -51,7 +52,7 @@ export function ErrorPageView({ page }: { page: ErrorPageProps }) {
             </Button>
           </EmptyContent>
         </Empty>
-      </section>
+      </SitePanel>
     </main>
   );
 }

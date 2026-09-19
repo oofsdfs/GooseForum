@@ -168,14 +168,33 @@ const publishedTopic = {
   lastUpdateTime: '2026-09-17T00:00:00Z',
 }
 
+const responsiveListBadge = {
+  code: 'responsive-list-badge',
+  type: 'system',
+  grantMode: 'manual',
+  name: 'Responsive list badge',
+  description: 'Available to themes but hidden by the default topic list',
+  iconType: 'image',
+  iconKey: 'responsive-list-badge',
+  iconUrl: '/responsive-list-badge.svg',
+  color: 'blue',
+  level: 'special',
+  isEnabled: true,
+  isWearable: true,
+  sortOrder: 1,
+  source: 'manual',
+  reason: '',
+  grantedAt: '2026-09-17T00:00:00Z',
+}
+
 const responsiveTopic = {
   ...publishedTopic,
   id: 101,
   title: 'How should a long topic title adapt cleanly across a compact mobile forum list?',
   description: 'The desktop summary remains unchanged.',
   url: '/p/test/60',
-  author: { id: 12, username: 'responsive-author', avatarUrl: '' },
-  participants: [{ id: 12, username: 'responsive-author', avatarUrl: '' }],
+  author: { id: 12, username: 'responsive-author', avatarUrl: '', wornBadge: responsiveListBadge },
+  participants: [{ id: 12, username: 'responsive-author', avatarUrl: '', wornBadge: responsiveListBadge }],
   categories: [
     { id: 4, name: 'Coding', url: '/c/Coding/4', color: '#8241d6' },
     { id: 5, name: 'Frontend', url: '/c/Frontend/5', color: '#0ea5e9' },
@@ -447,6 +466,7 @@ test('uses the compact topic information hierarchy only on mobile', async ({ pag
 
   await expect(title).toBeVisible()
   await expect(pin).toBeVisible()
+  await expect(page.getByAltText('Responsive list badge')).toHaveCount(0)
   if ((page.viewportSize()?.width || 0) >= 1024) {
     await expect(mobileAvatar).toBeHidden()
     await expect(page.getByRole('columnheader', { name: 'Replies' })).toBeVisible()

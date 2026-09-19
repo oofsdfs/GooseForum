@@ -14,6 +14,10 @@ export function ProfileAvatar({
   className,
   framed = true,
   compactBadge = false,
+  badgePosition = "right",
+  hideOutline,
+  avatarClassName,
+  badgeClassName,
 }: {
   src: string;
   name: string;
@@ -21,13 +25,20 @@ export function ProfileAvatar({
   className?: string;
   framed?: boolean;
   compactBadge?: boolean;
+  badgePosition?: "left" | "right";
+  hideOutline?: boolean;
+  avatarClassName?: string;
+  badgeClassName?: string;
 }) {
+  const shouldHideOutline = hideOutline ?? !framed;
   return (
-    <span className={cn("relative inline-block shrink-0", className)}>
+    <span className={cn("relative isolate inline-block shrink-0", className)}>
       <Avatar
         className={cn(
           "size-full",
           framed && "border-2 border-background bg-background shadow-sm",
+          shouldHideOutline && "after:hidden",
+          avatarClassName,
         )}
       >
         <AvatarImage src={src} alt={name} className="object-cover" />
@@ -38,9 +49,11 @@ export function ProfileAvatar({
       {badge ? (
         <span
           className={cn(
-            "absolute -bottom-1 -right-1 z-10 flex size-[38%] min-h-5 min-w-5 items-center justify-center rounded-full p-0.5 shadow-sm ring-1 ring-inset",
+            "pointer-events-none absolute -bottom-1 z-30 flex size-[38%] min-h-5 min-w-5 items-center justify-center rounded-full p-0.5 shadow-sm ring-1 ring-inset",
+            badgePosition === "left" ? "-left-1" : "-right-1",
             compactBadge && "min-h-4 min-w-4",
             badgeTone(badge.color, badge.level),
+            badgeClassName,
           )}
           title={badge.description || badge.name}
         >

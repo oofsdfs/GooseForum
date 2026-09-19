@@ -31,6 +31,7 @@ import { GooseLink, useGooseRuntime } from "@gooseforum/runtime";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { MarkdownComposer } from "../editor/markdown-composer";
 import { PageHeader } from "../layout/page-header";
+import { SitePanel } from "../layout/site-panel";
 
 export function PublishPageView({ page }: { page: PublishPageProps }) {
   const { t } = useTranslation("publish");
@@ -188,7 +189,7 @@ export function PublishPageView({ page }: { page: PublishPageProps }) {
         description={t("subtitle")}
       />
       <div className="grid gap-0 lg:gap-3 xl:grid-cols-[minmax(0,1fr)_280px]">
-        <section className="site-panel rounded-xl border bg-background p-4 lg:p-5">
+        <SitePanel className="p-4 lg:p-5">
           <FieldGroup>
             <Field data-invalid={validation && !title.trim()}>
               <FieldLabel htmlFor="topic-title">{t("fields.title")}</FieldLabel>
@@ -330,9 +331,9 @@ export function PublishPageView({ page }: { page: PublishPageProps }) {
               </Button>
             </div>
           </FieldGroup>
-        </section>
+        </SitePanel>
         <aside className="flex flex-col gap-0 lg:gap-3">
-          <section className="site-panel rounded-xl border bg-background p-4">
+          <SitePanel className="p-4">
             <div className="flex items-center gap-2">
               <ListChecks />
               <h2 className="text-sm font-semibold">{t("checklist.title")}</h2>
@@ -358,9 +359,9 @@ export function PublishPageView({ page }: { page: PublishPageProps }) {
                 })}
               />
             </ul>
-          </section>
+          </SitePanel>
           {selected.length ? (
-            <section className="site-panel rounded-xl border bg-background p-4">
+            <SitePanel className="p-4">
               <h2 className="text-sm font-semibold">
                 {t("selectedCategories")}
               </h2>
@@ -382,7 +383,7 @@ export function PublishPageView({ page }: { page: PublishPageProps }) {
                   </Button>
                 ))}
               </div>
-            </section>
+            </SitePanel>
           ) : null}
         </aside>
       </div>

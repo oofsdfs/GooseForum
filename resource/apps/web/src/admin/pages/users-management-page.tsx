@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useLatestRequest } from '../use-latest-request'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { AdminBadge, AdminUser, GooseAdminApi, UserBadge } from '@gooseforum/client'
@@ -61,7 +62,7 @@ export function UsersManagementPage({ api, text }: { api: GooseAdminApi; text: T
     setPage(1)
   }
 
-  return <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+  return <AdminPage>
     <header><h2 className="text-lg font-semibold tracking-tight">{text('title')}</h2><p className="text-xs text-muted-foreground">{text('description')}</p></header>
     {error ? <Alert variant="destructive"><AlertTriangle /><AlertTitle>{text('loadFailed')}</AlertTitle><AlertDescription className="flex items-center justify-between gap-3"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void load()}>{text('retry')}</Button></AlertDescription></Alert> : null}
     <section className="overflow-hidden rounded-lg border bg-background">
@@ -72,7 +73,7 @@ export function UsersManagementPage({ api, text }: { api: GooseAdminApi; text: T
       {loading && !users.length ? <UserEmpty icon={<Spinner />} title={text('loading')} /> : !users.length ? <UserEmpty icon={<Search />} title={text('empty')} /> : <><div className="hidden md:block"><Table className="min-w-220 table-fixed"><TableHeader className="bg-muted/30"><TableRow><TableHead className="h-8">{text('user')}</TableHead><TableHead className="h-8 w-48">{text('roles')}</TableHead><TableHead className="h-8 w-28">{text('status')}</TableHead><TableHead className="h-8 w-40">{text('createdAt')}</TableHead><TableHead className="h-8 w-40">{text('lastActive')}</TableHead><TableHead className="h-8 w-16 text-right">{text('actions')}</TableHead></TableRow></TableHeader><TableBody>{users.map((user) => <TableRow key={user.userId}><TableCell className="py-2"><UserIdentity user={user} text={text} /></TableCell><TableCell className="py-2"><div className="flex flex-wrap gap-1">{user.roleList?.length ? user.roleList.map((role) => <Badge key={role.value} variant="secondary">{role.name}</Badge>) : <span className="text-xs text-muted-foreground">{text('noRole')}</span>}</div></TableCell><TableCell className="py-2"><Badge variant={user.status === 0 ? 'outline' : 'destructive'}>{user.status === 0 ? <CheckCircle2 data-icon="inline-start" /> : <ShieldOff data-icon="inline-start" />}{user.status === 0 ? text('enabled') : text('disabled')}</Badge></TableCell><TableCell className="truncate py-2 text-xs text-muted-foreground">{user.createTime || '—'}</TableCell><TableCell className="truncate py-2 text-xs text-muted-foreground">{user.lastActiveTime || text('never')}</TableCell><TableCell className="py-2 text-right"><Button variant="ghost" size="icon-sm" title={text('edit')} onClick={() => setEditingUser(user)}><UserCog /></Button></TableCell></TableRow>)}</TableBody></Table></div><div className="divide-y md:hidden">{users.map((user) => <article key={user.userId} className="flex items-start gap-2.5 px-3 py-2.5"><UserIdentity user={user} text={text} compact /><Button variant="ghost" size="icon-sm" title={text('edit')} onClick={() => setEditingUser(user)}><UserCog /></Button></article>)}</div></>}
     </section>
     <UserEditor user={editingUser} api={api} text={text} onClose={() => setEditingUser(null)} onSaved={async () => { setEditingUser(null); await load() }} />
-  </main>
+  </AdminPage>
 }
 
 function UserIdentity({ user, text, compact = false }: { user: AdminUser; text: Text; compact?: boolean }) {

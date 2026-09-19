@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { GooseAdminApi, SiteSettings } from "@gooseforum/client";
 import { Button } from "@gooseforum/ui/components/button";
@@ -82,7 +83,7 @@ export function SiteInfoManagementPage({
     }
   }
   return (
-    <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+    <AdminPage>
       <header className="flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">{text("site")}</h2>
@@ -232,7 +233,7 @@ export function SiteInfoManagementPage({
           </div>
         </form>
       )}
-    </main>
+    </AdminPage>
   );
 }
 function msg(r: unknown, f: string) {

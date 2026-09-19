@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useCallback, useEffect, useState } from "react";
 import type { AdminBadge, GooseAdminApi } from "@gooseforum/client";
 import { Badge } from "@gooseforum/ui/components/badge";
@@ -96,7 +97,7 @@ export function BadgesManagementPage({
     void load();
   }, [load]);
   return (
-    <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+    <AdminPage>
       <header className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold">{text("badges")}</h2>
@@ -206,7 +207,7 @@ export function BadgesManagementPage({
         onClose={() => setDeleting(null)}
         onDeleted={load}
       />
-    </main>
+    </AdminPage>
   );
 }
 function BadgeEditor({

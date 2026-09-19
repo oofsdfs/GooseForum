@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { useLatestRequest } from '../use-latest-request'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { AdminPermissionOption, AdminRole, GooseAdminApi } from '@gooseforum/client'
@@ -67,7 +68,7 @@ export function RolesManagementPage({ api, text }: { api: GooseAdminApi; text: T
     setPage(1)
   }
 
-  return <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+  return <AdminPage>
     <header className="flex items-center justify-between gap-3"><div className="min-w-0"><h2 className="text-lg font-semibold tracking-tight">{text('title')}</h2><p className="truncate text-xs text-muted-foreground">{text('description')}</p></div><Button size="sm" onClick={() => setDraft({ ...emptyDraft })}><Plus data-icon="inline-start" />{text('create')}</Button></header>
     {error ? <Alert variant="destructive"><AlertTriangle /><AlertTitle>{text('loadFailed')}</AlertTitle><AlertDescription className="flex items-center justify-between gap-3"><span>{error}</span><Button variant="outline" size="sm" onClick={() => void load()}>{text('retry')}</Button></AlertDescription></Alert> : null}
     <section className="overflow-hidden rounded-lg border bg-background">
@@ -80,7 +81,7 @@ export function RolesManagementPage({ api, text }: { api: GooseAdminApi; text: T
     </section>
     <RoleEditor value={draft} permissionOptions={permissionOptions} api={api} text={text} onClose={() => setDraft(null)} onSaved={async () => { setDraft(null); await load() }} />
     <DeleteRoleDialog role={deletingRole} api={api} text={text} onClose={() => setDeletingRole(null)} onDeleted={async () => { setDeletingRole(null); await load() }} />
-  </main>
+  </AdminPage>
 }
 
 function RoleEditor({ value, permissionOptions, api, text, onClose, onSaved }: { value: RoleDraft | null; permissionOptions: AdminPermissionOption[]; api: GooseAdminApi; text: Text; onClose(): void; onSaved(): Promise<void> }) {

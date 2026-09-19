@@ -11,6 +11,7 @@ import (
 	"github.com/leancodebox/GooseForum/app/models/forum/userStatistics"
 	"github.com/leancodebox/GooseForum/app/models/forum/users"
 	"github.com/leancodebox/GooseForum/app/models/hotdataserve"
+	"github.com/leancodebox/GooseForum/app/service/badgeservice"
 	"github.com/spf13/cast"
 )
 
@@ -47,8 +48,12 @@ func Members(c *gin.Context) {
 	}
 	result := users.PublicPage(users.PublicPageQuery{PageSize: memberDirectoryPageSize, BeforeID: beforeID, AfterID: afterID})
 	userIDs := make([]uint64, 0, len(result.Data))
+	selectedBadges := make(map[uint64]string, len(result.Data))
 	for _, user := range result.Data {
 		userIDs = append(userIDs, user.Id)
+		if user.WornBadgeCode != "" {
+			selectedBadges[user.Id] = user.WornBadgeCode
+		}
 	}
 	stats := map[uint64]*userStatistics.Entity{}
 	if len(userIDs) > 0 {
@@ -58,7 +63,7 @@ func Members(c *gin.Context) {
 			}
 		}
 	}
-	props := buildMembersPageProps(result, stats)
+	props := buildMembersPageProps(result, stats, badgeservice.GetWornBadges(selectedBadges))
 	payload := PagePayload{
 		Component: PageComponentMembers,
 		Props:     props,
@@ -84,14 +89,15 @@ func buildCategoriesPageProps(items []*category.Entity) CategoriesPageProps {
 	return CategoriesPageProps{Categories: result, Total: len(result)}
 }
 
-func buildMembersPageProps(result users.PublicPageResult, stats map[uint64]*userStatistics.Entity) MembersPageProps {
+func buildMembersPageProps(result users.PublicPageResult, stats map[uint64]*userStatistics.Entity, wornBadges map[uint64]*badgeservice.UserBadge) MembersPageProps {
 	members := make([]MemberDirectoryPayload, 0, len(result.Data))
 	for i := range result.Data {
 		user := &result.Data[i]
 		member := MemberDirectoryPayload{
 			ID: user.Id, Username: user.Username, Nickname: user.Nickname,
 			AvatarURL: user.GetWebAvatarUrl(), Bio: user.Bio, Prestige: user.Prestige,
-			JoinedAt: user.CreatedAt.Format("2006-01"), URL: "/u/" + strconv.FormatUint(user.Id, 10),
+			WornBadge: wornBadges[user.Id],
+			JoinedAt:  user.CreatedAt.Format("2006-01"), URL: "/u/" + strconv.FormatUint(user.Id, 10),
 		}
 		if member.Nickname == "" {
 			member.Nickname = member.Username

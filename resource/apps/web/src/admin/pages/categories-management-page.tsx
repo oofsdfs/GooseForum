@@ -1,3 +1,4 @@
+import { AdminPage } from '../components/admin-page'
 import { ColorPicker } from '@gooseforum/ui/components/color-picker'
 import { useLatestRequest } from '../use-latest-request'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -95,7 +96,7 @@ export function CategoriesManagementPage({ api, permissions, text }: CategoriesM
   }
 
   return (
-    <main className="flex flex-1 flex-col gap-3 px-3 py-3 lg:px-4">
+    <AdminPage>
       <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
@@ -183,7 +184,7 @@ export function CategoriesManagementPage({ api, permissions, text }: CategoriesM
       <ModeratorSheet open={globalOpen} title={text('globalModerators')} description={text('globalHint')} moderators={globalModerators} api={api} text={text} onOpenChange={setGlobalOpen} onChanged={load} />
       <ModeratorSheet open={Boolean(moderatorCategory)} title={moderatorCategory?.category || text('moderators')} description={text('moderators')} moderators={moderatorCategory?.moderators || []} categoryId={moderatorCategory?.id} api={api} text={text} onOpenChange={(open) => !open && setModeratorCategory(null)} onChanged={load} />
       <AccessSheet category={accessCategory} overview={overview} api={api} text={text} onClose={() => setAccessCategory(null)} onSaved={load} />
-    </main>
+    </AdminPage>
   )
 }
 

@@ -392,62 +392,16 @@ export function MessagesPageView({
               <ItemGroup className="gap-0 has-data-[size=sm]:gap-0">
                 {filteredConversations.map((conversation, index) => (
                   <Fragment key={conversation.peerId}>
-                    <Item
-                      asChild
-                      size="sm"
-                      className={cn(
-                        "rounded-none border-0 px-4 py-3",
-                        active?.peerId === conversation.peerId &&
-                          "bg-primary/5 shadow-[inset_3px_0_0_var(--primary)]",
-                      )}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setError("");
-                          setActivePeerId(conversation.peerId);
-                        }}
-                      >
-                        <ItemMedia className="relative">
-                          <Avatar className="size-10">
-                            <AvatarImage
-                              src={conversation.peerAvatar}
-                              alt={conversation.peerUsername}
-                            />
-                            <AvatarFallback>
-                              {conversation.peerUsername
-                                .slice(0, 1)
-                                .toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          {conversation.unreadCount ? (
-                            <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-destructive ring-2 ring-background" />
-                          ) : null}
-                        </ItemMedia>
-                        <ItemContent className="min-w-0">
-                          <ItemTitle className="w-full justify-between">
-                            <span className="truncate font-semibold">
-                              {conversation.peerUsername}
-                            </span>
-                            <time className="shrink-0 text-[11px] font-normal text-muted-foreground">
-                              {formatChatTime(
-                                conversation.lastMsgTime,
-                                runtime.locale,
-                              )}
-                            </time>
-                          </ItemTitle>
-                          <ItemDescription
-                            className={cn(
-                              "line-clamp-1",
-                              conversation.unreadCount &&
-                                "font-semibold text-foreground",
-                            )}
-                          >
-                            {conversation.lastMsg || t("noMessagesYet")}
-                          </ItemDescription>
-                        </ItemContent>
-                      </button>
-                    </Item>
+                    <ConversationListItem
+                      conversation={conversation}
+                      active={active?.peerId === conversation.peerId}
+                      locale={runtime.locale}
+                      emptyLabel={t("noMessagesYet")}
+                      onSelect={() => {
+                        setError("");
+                        setActivePeerId(conversation.peerId);
+                      }}
+                    />
                     {index < filteredConversations.length - 1 ? (
                       <ItemSeparator className="my-0" />
                     ) : null}
@@ -563,50 +517,13 @@ export function MessagesPageView({
                             </Button>
                           ) : null}
                           {active.messages.map((message) => (
-                            <MessageScrollerItem
+                            <ChatMessageItem
                               key={message.id}
-                              messageId={String(message.id)}
-                            >
-                              <Message
-                                align={message.isSelf ? "end" : "start"}
-                                className={cn(
-                                  "max-w-[88%] lg:max-w-[82%]",
-                                  message.isSelf ? "ml-auto" : "mr-auto",
-                                )}
-                              >
-                                {!message.isSelf ? (
-                                  <MessageAvatar>
-                                    <Avatar className="size-8">
-                                      <AvatarImage
-                                        src={active.peerAvatar}
-                                        alt={active.peerUsername}
-                                      />
-                                      <AvatarFallback>
-                                        {active.peerUsername.slice(0, 1)}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                  </MessageAvatar>
-                                ) : null}
-                                <MessageContent className="w-auto max-w-full gap-1">
-                                  <div
-                                    className={cn(
-                                      "whitespace-pre-wrap rounded-xl px-3 py-2 text-sm leading-relaxed shadow-sm lg:px-4",
-                                      message.isSelf
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-muted text-foreground",
-                                    )}
-                                  >
-                                    {message.content}
-                                  </div>
-                                  <MessageFooter>
-                                    {formatChatTime(
-                                      message.createdAt,
-                                      runtime.locale,
-                                    )}
-                                  </MessageFooter>
-                                </MessageContent>
-                              </Message>
-                            </MessageScrollerItem>
+                              message={message}
+                              peerAvatar={active.peerAvatar}
+                              peerUsername={active.peerUsername}
+                              locale={runtime.locale}
+                            />
                           ))}
                         </MessageGroup>
                       ) : (
@@ -806,6 +723,112 @@ export function MessagesPageView({
         </DialogContent>
       </Dialog>
     </main>
+  );
+}
+
+function ConversationListItem({
+  conversation,
+  active,
+  locale,
+  emptyLabel,
+  onSelect,
+}: {
+  conversation: Conversation;
+  active: boolean;
+  locale: string;
+  emptyLabel: string;
+  onSelect(): void;
+}) {
+  return (
+    <Item
+      asChild
+      size="sm"
+      className={cn(
+        "rounded-none border-0 px-4 py-3",
+        active && "bg-primary/5 shadow-[inset_3px_0_0_var(--primary)]",
+      )}
+    >
+      <button type="button" onClick={onSelect}>
+        <ItemMedia className="relative">
+          <Avatar className="size-10">
+            <AvatarImage
+              src={conversation.peerAvatar}
+              alt={conversation.peerUsername}
+            />
+            <AvatarFallback>
+              {conversation.peerUsername.slice(0, 1).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          {conversation.unreadCount ? (
+            <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-destructive ring-2 ring-background" />
+          ) : null}
+        </ItemMedia>
+        <ItemContent className="min-w-0">
+          <ItemTitle className="w-full justify-between">
+            <span className="truncate font-semibold">
+              {conversation.peerUsername}
+            </span>
+            <time className="shrink-0 text-[11px] font-normal text-muted-foreground">
+              {formatChatTime(conversation.lastMsgTime, locale)}
+            </time>
+          </ItemTitle>
+          <ItemDescription
+            className={cn(
+              "line-clamp-1",
+              conversation.unreadCount && "font-semibold text-foreground",
+            )}
+          >
+            {conversation.lastMsg || emptyLabel}
+          </ItemDescription>
+        </ItemContent>
+      </button>
+    </Item>
+  );
+}
+
+function ChatMessageItem({
+  message,
+  peerAvatar,
+  peerUsername,
+  locale,
+}: {
+  message: ChatMessagePayload;
+  peerAvatar: string;
+  peerUsername: string;
+  locale: string;
+}) {
+  return (
+    <MessageScrollerItem messageId={String(message.id)}>
+      <Message
+        align={message.isSelf ? "end" : "start"}
+        className={cn(
+          "max-w-[88%] lg:max-w-[82%]",
+          message.isSelf ? "ml-auto" : "mr-auto",
+        )}
+      >
+        {!message.isSelf ? (
+          <MessageAvatar>
+            <Avatar className="size-8">
+              <AvatarImage src={peerAvatar} alt={peerUsername} />
+              <AvatarFallback>{peerUsername.slice(0, 1)}</AvatarFallback>
+            </Avatar>
+          </MessageAvatar>
+        ) : null}
+        <MessageContent className="w-auto max-w-full gap-1">
+          <div
+            className={cn(
+              "whitespace-pre-wrap rounded-xl px-3 py-2 text-sm leading-relaxed shadow-sm lg:px-4",
+              message.isSelf
+                ? "bg-primary text-primary-foreground"
+                : "bg-muted text-foreground",
+            )}
+          >
+            {message.content}
+          </div>
+          <MessageFooter>{formatChatTime(message.createdAt, locale)}</MessageFooter>
+        </MessageContent>
+      </Message>
+    </MessageScrollerItem>
   );
 }
 

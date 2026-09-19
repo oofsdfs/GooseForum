@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import {
   cloneSiteThemeTokens,
   siteThemeTokenKeys,
@@ -29,6 +30,7 @@ import { Spinner } from "@gooseforum/ui/components/spinner";
 import { Switch } from "@gooseforum/ui/components/switch";
 import { Tabs, TabsList, TabsTrigger } from "@gooseforum/ui/components/tabs";
 import { Textarea } from "@gooseforum/ui/components/textarea";
+import { cn } from "@gooseforum/ui/lib/utils";
 import { useGooseRuntime } from "@gooseforum/runtime";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { themePresets } from "../theme/theme-presets";
@@ -434,7 +436,7 @@ export function ThemePreviewPageView({
           ) : mode === "components" ? (
             <ComponentPreview />
           ) : (
-            <div className="rounded-xl border bg-background p-3">
+            <PreviewCard padding="sm">
               <div className="mb-2 flex justify-between">
                 <h3 className="font-semibold">CSS</h3>
                 <Button
@@ -451,7 +453,7 @@ export function ThemePreviewPageView({
                 value={css || "/* custom theme disabled */"}
                 className="min-h-[60vh] font-mono text-xs"
               />
-            </div>
+            </PreviewCard>
           )}
         </div>
       </section>
@@ -527,7 +529,7 @@ function ForumPreview({ t }: { t: Translate }) {
         </article>
       </div>
       <aside className="flex flex-col gap-3">
-        <div className="rounded-xl border bg-background p-3">
+        <PreviewCard padding="sm">
           <h3 className="font-semibold">Messages</h3>
           <div className="mt-3 rounded-lg bg-muted p-2 text-sm">
             {t("sampleMessageIncoming")}
@@ -535,7 +537,7 @@ function ForumPreview({ t }: { t: Translate }) {
           <div className="ml-6 mt-2 rounded-lg bg-primary p-2 text-sm text-primary-foreground">
             {t("sampleMessageOutgoing")}
           </div>
-        </div>
+        </PreviewCard>
         <StatusPreview />
       </aside>
     </div>
@@ -544,7 +546,7 @@ function ForumPreview({ t }: { t: Translate }) {
 function ComponentPreview() {
   return (
     <div className="grid gap-3 md:grid-cols-2">
-      <div className="rounded-xl border bg-background p-4">
+      <PreviewCard>
         <div className="h-28 rounded-xl bg-muted" />
         <h3 className="mt-3 font-semibold">Card title</h3>
         <p className="text-sm text-muted-foreground">
@@ -556,8 +558,8 @@ function ComponentPreview() {
             Secondary
           </Button>
         </div>
-      </div>
-      <div className="rounded-xl border bg-background p-4">
+      </PreviewCard>
+      <PreviewCard>
         <h3 className="font-semibold">Form states</h3>
         <Input className="mt-3" defaultValue="GooseForum" />
         <Textarea
@@ -568,14 +570,33 @@ function ComponentPreview() {
           <span>Selector</span>
           <Switch defaultChecked />
         </div>
-      </div>
+      </PreviewCard>
       <StatusPreview />
     </div>
   );
 }
+function PreviewCard({
+  children,
+  padding = "md",
+}: {
+  children: ReactNode;
+  padding?: "sm" | "md";
+}) {
+  return (
+    <div
+      className={cn(
+        "rounded-xl border bg-background",
+        padding === "sm" ? "p-3" : "p-4",
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 function StatusPreview() {
   return (
-    <div className="rounded-xl border bg-background p-3">
+    <PreviewCard padding="sm">
       <h3 className="font-semibold">Status</h3>
       <div className="mt-3 grid gap-2 text-sm">
         <div className="rounded-lg bg-primary/10 px-3 py-2 text-primary">
@@ -591,7 +612,7 @@ function StatusPreview() {
           Error state
         </div>
       </div>
-    </div>
+    </PreviewCard>
   );
 }
 function Contrast({

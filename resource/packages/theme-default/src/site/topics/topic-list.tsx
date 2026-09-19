@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import type { PagePayload, TopicPayload } from "@gooseforum/client";
 import type { TFunction } from "i18next";
 import {
@@ -15,6 +16,7 @@ import {
   AvatarImage,
 } from "@gooseforum/ui/components/avatar";
 import { Button } from "@gooseforum/ui/components/button";
+import { cn } from "@gooseforum/ui/lib/utils";
 import { GooseLink, useGoosePageFetcher } from "@gooseforum/runtime";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { UserCardPopover } from "../users/user-card-popover";
@@ -34,6 +36,24 @@ type TopicPage = {
 };
 
 const modeKey = "goose:topic-list-mode";
+
+export function TopicListToolbar({
+  children,
+  action,
+}: {
+  children: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <div
+      data-slot="topic-list-toolbar"
+      className="flex flex-col gap-3 border-b px-4 py-3 lg:flex-row lg:items-center lg:justify-between"
+    >
+      <div className="flex min-w-0 flex-wrap items-center gap-2">{children}</div>
+      {action}
+    </div>
+  );
+}
 
 export function useTopicList<T extends TopicPage>(page: T, pageUrl: string) {
   const fetchPage = useGoosePageFetcher();
@@ -295,17 +315,10 @@ const TopicRow = memo(function TopicRow({
           </h2>
           {showCategories
             ? topic.categories.map((category) => (
-                <GooseLink
+                <TopicCategoryLink
                   key={category.id}
-                  href={category.url}
-                  className="hidden shrink-0 items-center gap-1.5 rounded-full border bg-muted px-2.5 py-1 text-[11px] font-semibold leading-none lg:inline-flex"
-                >
-                  <span
-                    className="size-2 rounded-full"
-                    style={{ backgroundColor: category.color }}
-                  />
-                  {category.name}
-                </GooseLink>
+                  category={category}
+                />
               ))
             : null}
           {isHot ? (
@@ -336,17 +349,11 @@ const TopicRow = memo(function TopicRow({
           <span className="flex min-w-0 items-center gap-1 overflow-hidden">
             {showCategories
               ? topic.categories.map((category) => (
-                  <GooseLink
+                  <TopicCategoryLink
                     key={category.id}
-                    href={category.url}
-                    className="inline-flex h-5 max-w-28 shrink-0 items-center gap-1 truncate rounded-md bg-muted px-1.5 text-[11px] font-semibold leading-none"
-                  >
-                    <span
-                      className="size-1.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: category.color }}
-                    />
-                    <span className="truncate">{category.name}</span>
-                  </GooseLink>
+                    category={category}
+                    compact
+                  />
                 ))
               : null}
             {isHot ? (
@@ -386,6 +393,37 @@ const TopicRow = memo(function TopicRow({
     </div>
   );
 });
+
+function TopicCategoryLink({
+  category,
+  compact = false,
+}: {
+  category: TopicPayload["categories"][number];
+  compact?: boolean;
+}) {
+  return (
+    <GooseLink
+      href={category.url}
+      data-slot="topic-category-link"
+      data-compact={compact || undefined}
+      className={cn(
+        "shrink-0 items-center bg-muted text-[11px] font-semibold leading-none transition-colors hover:bg-muted/60 focus-visible:bg-muted/60",
+        compact
+          ? "inline-flex h-5 max-w-28 gap-1 truncate rounded-md px-1.5"
+          : "hidden gap-1.5 rounded-full border px-2.5 py-1 lg:inline-flex",
+      )}
+    >
+      <span
+        className={cn(
+          "shrink-0 rounded-full",
+          compact ? "size-1.5" : "size-2",
+        )}
+        style={{ backgroundColor: category.color }}
+      />
+      {compact ? <span className="truncate">{category.name}</span> : category.name}
+    </GooseLink>
+  );
+}
 
 function AvatarStack({
   users,

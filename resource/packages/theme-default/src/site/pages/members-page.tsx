@@ -6,11 +6,6 @@ import {
 } from "lucide-react";
 import { formatCompactNumber, type MembersPageProps } from "@gooseforum/client";
 import { useTranslation } from "react-i18next";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@gooseforum/ui/components/avatar";
 import { Button } from "@gooseforum/ui/components/button";
 import {
   Empty,
@@ -21,6 +16,7 @@ import {
 } from "@gooseforum/ui/components/empty";
 import { GooseLink } from "@gooseforum/runtime";
 import { PageHeader } from "../layout/page-header";
+import { ProfileAvatar } from "../users/profile-avatar";
 
 export function MembersPageView({ page }: { page: MembersPageProps }) {
   const { t } = useTranslation("members");
@@ -38,15 +34,17 @@ export function MembersPageView({ page }: { page: MembersPageProps }) {
                 className="group flex min-w-0 flex-col overflow-hidden border-b bg-background transition-colors hover:border-primary/30 hover:bg-muted lg:rounded-xl lg:border"
               >
                 <div className="flex min-w-0 items-center gap-2.5 px-3.5 pt-3.5">
-                  <Avatar
-                    size="lg"
-                    className="transition group-hover:ring-1 group-hover:ring-primary/30"
-                  >
-                    <AvatarImage src={member.avatarUrl} alt={displayName} />
-                    <AvatarFallback>
-                      {displayName.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <ProfileAvatar
+                    src={member.avatarUrl}
+                    name={displayName}
+                    badge={member.wornBadge}
+                    badgePosition="right"
+                    compactBadge
+                    framed={false}
+                    hideOutline={false}
+                    avatarClassName="transition group-hover:ring-1 group-hover:ring-primary/30"
+                    className="size-10"
+                  />
                   <div className="min-w-0 flex-1">
                     <div className="flex min-w-0 items-baseline gap-1.5">
                       <h2 className="truncate text-sm font-bold transition-colors group-hover:text-primary">

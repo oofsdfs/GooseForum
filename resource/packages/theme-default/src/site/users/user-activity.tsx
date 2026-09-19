@@ -32,6 +32,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@gooseforum/ui/components/empty";
+import { cn } from "@gooseforum/ui/lib/utils";
 import { GooseLink, useGooseLocale, useGoosePageFetcher } from "@gooseforum/runtime";
 import { useServerErrorMessage } from "@gooseforum/runtime/i18n/server-error";
 import { TopicListFooter, TopicTable } from "../topics/topic-list";
@@ -247,11 +248,12 @@ function ProfileTabLink({
     <GooseLink
       href={tab.url}
       aria-current={tab.active ? "page" : undefined}
-      className={
+      className={cn(
+        "inline-flex h-10 min-w-0 items-center justify-center gap-2 px-2 text-sm font-medium",
         tab.active
-          ? "inline-flex h-10 min-w-0 items-center justify-center gap-2 border-b-2 border-primary px-2 text-sm font-medium text-primary"
-          : "inline-flex h-10 min-w-0 items-center justify-center gap-2 px-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-      }
+          ? "border-b-2 border-primary text-primary"
+          : "text-muted-foreground hover:text-foreground",
+      )}
     >
       <Icon className="hidden size-4 shrink-0 lg:block" />
       <span className="truncate">{label}</span>
