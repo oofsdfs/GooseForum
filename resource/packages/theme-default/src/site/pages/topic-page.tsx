@@ -142,6 +142,17 @@ export function TopicPageView({
   const [moderationBusy, setModerationBusy] = useState(false);
   const [imageIndex, setImageIndex] = useState(-1);
   const [imageActualSize, setImageActualSize] = useState(false);
+  const imageViewport = useRef<HTMLDivElement>(null);
+  const suppressImageClick = useRef(false);
+  const imageDrag = useRef<{ x: number; y: number; left: number; top: number; moved: boolean } | null>(null);
+  useEffect(() => {
+    imageDrag.current = null;
+    suppressImageClick.current = false;
+    const viewport = imageViewport.current;
+    if (!viewport) return;
+    viewport.scrollLeft = imageActualSize ? (viewport.scrollWidth - viewport.clientWidth) / 2 : 0;
+    viewport.scrollTop = imageActualSize ? (viewport.scrollHeight - viewport.clientHeight) / 2 : 0;
+  }, [imageActualSize, imageIndex]);
   const [images, setImages] = useState<Array<{ src: string; alt: string }>>([]);
   const [activePostNo, setActivePostNo] = useState(
     firstNo(page.postStream.posts) || 1,
@@ -943,7 +954,7 @@ export function TopicPageView({
         onOpenChange={(open) => !open && setImageIndex(-1)}
       >
         <DialogContent
-          className="flex h-dvh w-full max-w-none flex-col gap-0 rounded-none bg-transparent p-0 ring-0 sm:max-w-none"
+          className="flex h-dvh w-full max-w-none flex-col gap-0 rounded-none border-0 bg-black/90 p-0 text-white ring-0 sm:max-w-none"
           showCloseButton={false}
           onKeyDown={(event) => {
             if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
@@ -970,8 +981,43 @@ export function TopicPageView({
               <Button variant="secondary" size="icon" aria-label={t('close')} onClick={() => setImageIndex(-1)}><X /></Button>
             </div>
           </div>
-          <div key={`${imageIndex}-${imageActualSize}`} className="min-h-0 flex-1 overflow-auto p-3 sm:px-16">
-            <div className="grid min-h-full min-w-full place-items-center">
+          <div
+            ref={imageViewport}
+            className="min-h-0 flex-1 overflow-auto overscroll-contain p-3 sm:px-16"
+            style={{ touchAction: imageActualSize ? "none" : "auto" }}
+            onPointerDown={(event) => {
+              if (!imageActualSize || event.button !== 0) return;
+              suppressImageClick.current = false;
+              const viewport = event.currentTarget;
+              imageDrag.current = { x: event.clientX, y: event.clientY, left: viewport.scrollLeft, top: viewport.scrollTop, moved: false };
+            }}
+            onPointerMove={(event) => {
+              const drag = imageDrag.current;
+              if (!drag) return;
+              const dx = event.clientX - drag.x;
+              const dy = event.clientY - drag.y;
+              if (Math.abs(dx) + Math.abs(dy) > 4) {
+                drag.moved = true;
+                event.currentTarget.setPointerCapture(event.pointerId);
+                event.currentTarget.scrollLeft = drag.left - dx;
+                event.currentTarget.scrollTop = drag.top - dy;
+              }
+            }}
+            onPointerUp={(event) => {
+              if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId);
+              suppressImageClick.current = Boolean(imageDrag.current?.moved);
+              imageDrag.current = null;
+            }}
+            onPointerCancel={() => { imageDrag.current = null; }}
+            onClickCapture={(event) => {
+              if (suppressImageClick.current) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              suppressImageClick.current = false;
+            }}
+          >
+            <div className={imageActualSize ? "flex min-h-full w-max min-w-full" : "flex min-h-full w-full items-center justify-center"}>
               <img
                 src={images[imageIndex]?.src}
                 alt={images[imageIndex]?.alt || ""}
@@ -984,8 +1030,9 @@ export function TopicPageView({
                     setImageActualSize((value) => !value);
                   }
                 }}
-                style={imageActualSize ? { maxWidth: 'none' } : undefined}
-                className={imageActualSize ? 'cursor-zoom-out' : 'max-h-[calc(100dvh-5rem)] max-w-full cursor-zoom-in object-contain'}
+                draggable={false}
+                style={imageActualSize ? { maxWidth: 'none', width: 'auto', height: 'auto', flexShrink: 0 } : undefined}
+                className={imageActualSize ? 'm-auto cursor-grab select-none active:cursor-grabbing' : 'max-h-[calc(100dvh-5rem)] max-w-full cursor-zoom-in object-contain'}
                 onClick={() => setImageActualSize((value) => !value)}
               />
             </div>

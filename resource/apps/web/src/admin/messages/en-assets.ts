@@ -1,4 +1,11 @@
 export default {
+  viewMode: "View mode",
+  gridView: "Grid view",
+  listView: "List view",
+  loadMore: "Load more",
+  allLoaded: "All loaded",
+  retry: "Retry",
+
   badges: "Badges",
   badgesHint: "Manage system and custom badges.",
   newBadge: "New badge",

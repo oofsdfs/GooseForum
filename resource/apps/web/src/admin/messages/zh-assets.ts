@@ -1,4 +1,11 @@
 export default {
+  viewMode: "显示方式",
+  gridView: "网格视图",
+  listView: "列表视图",
+  loadMore: "加载更多",
+  allLoaded: "已加载全部",
+  retry: "重试",
+
   badges: "徽章",
   badgesHint: "管理系统徽章和自定义徽章。",
   newBadge: "新建徽章",

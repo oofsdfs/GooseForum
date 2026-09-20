@@ -1311,7 +1311,7 @@ describe("AppShell and static pages", () => {
     await user.click(screen.getByAltText("First attachment"));
     const imageDialog = screen.getByRole("dialog", { name: "图片预览" });
     expect(imageDialog.classList.contains("sm:max-w-none")).toBe(true);
-    expect(imageDialog.classList.contains("bg-transparent")).toBe(true);
+    expect(imageDialog.classList.contains("bg-black/90")).toBe(true);
     expect(imageDialog.classList.contains("bg-background/95")).toBe(false);
     expect(imageDialog.classList.contains("ring-0")).toBe(true);
     expect(within(imageDialog).getByText("1 / 2")).toBeTruthy();
