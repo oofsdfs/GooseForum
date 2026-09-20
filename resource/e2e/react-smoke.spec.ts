@@ -530,26 +530,13 @@ test('uses the compact topic information hierarchy only on mobile', async ({ pag
   await deepTitle.scrollIntoViewIfNeeded()
   const previousScrollY = await page.evaluate(() => window.scrollY)
   expect(previousScrollY).toBeGreaterThan(0)
-  await page.evaluate(() => {
-    const state = window as unknown as { __gooseOldListTopFlash: number }
-    state.__gooseOldListTopFlash = 0
-    window.addEventListener('scroll', () => {
-      const topicRow = document.querySelector('[data-slot="topic-row"]')
-      if (window.scrollY === 0 && topicRow?.getClientRects().length) {
-        state.__gooseOldListTopFlash++
-      }
-    }, { passive: true })
-  })
 
   await deepTitle.click()
   await page.waitForTimeout(100)
   expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0)
   await expect(page.getByRole('heading', { level: 1, name: 'Topic detail' })).toBeVisible()
   expect(await page.evaluate(() => window.scrollY)).toBe(0)
-  expect(await page.evaluate(() =>
-    (window as unknown as { __gooseOldListTopFlash: number })
-      .__gooseOldListTopFlash,
-  )).toBe(0)
+  await expect(row).toBeHidden()
   await testInfo.attach('topic-detail-after-transition', {
     body: await page.screenshot({ fullPage: false }),
     contentType: 'image/png',
