@@ -76,5 +76,5 @@ export const translationLoaders: Record<
   "ru/moderation-settings": () => import("./messages/ru-moderation-settings"),
   "ru/identity-settings": () => import("./messages/ru-identity-settings"),
   "ru/dashboard": () => import("./messages/ru-dashboard"),
-  "ru/audru-extra": () => import("./messages/ru-audit-extra"),
+  "ru/audit-extra": () => import("./messages/ru-audit-extra"),
 };
